@@ -17,4 +17,4 @@ main.o: main.cpp metrics.hpp
 
 
 clean:
-	rm -rf *.o *.out
+	rm -rf *.o *.out *.a
