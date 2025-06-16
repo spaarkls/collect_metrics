@@ -9,6 +9,7 @@
 #include <sstream>
 #include <memory>
 #include <vector>
+#include <atomic>
 
 #undef DATETIME_STR_SIZE
 #define DATETIME_STR_SIZE 64
@@ -70,7 +71,7 @@ class MetricManager {
     std::thread th;
     std::thread write_th;
     std::string filename;
-    bool running = true;
+    std::atomic<bool> running = {true};
 
     void start_loop(void);
     void write_loop(const std::string& filename, std::chrono::milliseconds interval);
@@ -78,7 +79,7 @@ class MetricManager {
 public:
     MetricManager(std::vector<std::shared_ptr<Metric>>&& metrics);
     MetricManager() = default;
-    
+    ~MetricManager();
     void add_metric(std::shared_ptr<Metric> metric);
 
     void run(const std::string& filename, std::chrono::milliseconds interval = std::chrono::milliseconds(1000));

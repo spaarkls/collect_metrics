@@ -92,6 +92,10 @@ Metrics::MetricManager::MetricManager(std::vector<std::shared_ptr<Metric>>&& met
     : metrics(std::move(metrics))
     { }
 
+Metrics::MetricManager::~MetricManager() {
+    stop();
+}
+
 void Metrics::MetricManager::add_metric(std::shared_ptr<Metric> metric) {
     metrics.push_back(std::move(metric));
 }
@@ -108,7 +112,7 @@ void Metrics::MetricManager::start_loop(void) {
 void Metrics::MetricManager::write_loop(const std::string& filename, std::chrono::milliseconds interval) {
     std::ofstream ofs(filename, std::ios::app);
     if (!ofs.is_open()) {
-        std::cerr << "Error: cannot open file " << filename << " for writing metrics\n";
+        std::cerr << "Error: can not open file " << filename << " for writing metrics\n";
         return;
     }
     while (running) {
@@ -134,4 +138,12 @@ std::string Metrics::MetricManager::collect() {
         report += metrics[i]->collect() + " | ";
     }
     return report + "\n";
+}
+
+void Metrics::MetricManager::stop(void) {
+    running = false;
+    if (th.joinable())
+        th.join();
+    if (write_th.joinable())
+        write_th.join();
 }
