@@ -87,6 +87,20 @@ void Metrics::CPUMetric::update(void) {
 }
 
 
+Metrics::HttpRequestMetric::HttpRequestMetric(const std::string& name_metric, std::chrono::steady_clock::duration interval)
+    : Metric(name_metric, interval)
+    { }
+
+void Metrics::HttpRequestMetric::update(void) {
+    unsigned int rps = counter_rps.exchange(0, std::memory_order_relaxed);
+    
+    {
+        std::lock_guard<std::mutex> lock(mtx);
+        metric_value = std::to_string(rps);
+    }
+}
+
+
 // Class MetricManager for management metrics in other thread;
 Metrics::MetricManager::MetricManager(std::vector<std::shared_ptr<Metric>>&& metrics)
     : metrics(std::move(metrics))

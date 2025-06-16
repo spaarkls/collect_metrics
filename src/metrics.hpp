@@ -17,6 +17,11 @@
 namespace Metrics {
 
 inline constexpr double PERCENT_RATIO = 100.0;
+inline std::atomic<unsigned int> counter_rps {};
+
+inline void count_http_request(void) {
+    counter_rps.fetch_add(1, std::memory_order_release);
+}
 
 class Metric {
 protected:
@@ -65,6 +70,14 @@ public:
     virtual void update(void) override final;
 };
 
+
+class HttpRequestMetric : public Metric {
+public:
+    HttpRequestMetric(const std::string& name_metric, std::chrono::steady_clock::duration interval = std::chrono::seconds(1));
+
+    virtual void update(void) override final;
+
+};
 
 class MetricManager {
     std::vector<std::shared_ptr<Metric>> metrics;

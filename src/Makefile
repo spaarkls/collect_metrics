@@ -3,7 +3,7 @@ CFLAGS=-std=c++17 -Wall -Werror -Wextra
 
 
 metric: metrics.o main.o
-	$(CC) $(CFLAGS) metrics.o main.o -o a.out
+	$(CC) $(CFLAGS) metrics.o main.o -o metric.exe
 
 metrics: metrics.cpp metrics.hpp
 	$(CC) -c $(CFLAGS) metrics.cpp -o metrics.o
