@@ -1,9 +1,10 @@
 #include "metrics.hpp"
 
 
-// Basic class Metric
+// Basic class Metric for interface;
 Metrics::Metric::Metric(const std::string& name_metric, std::chrono::steady_clock::duration interval) 
-    : title_metric(name_metric), update_interval(interval), last_update(std::chrono::steady_clock::now() - interval) 
+    : title_metric(name_metric), metric_value(), mtx(), last_update(std::chrono::steady_clock::now() - interval),
+    update_interval(interval) 
     { }
     
 Metrics::Metric::~Metric() = default;
@@ -25,7 +26,7 @@ std::string Metrics::Metric::collect(void) {
 }
 
 
-// class DateMetric;
+// class DateMetric for mesuare datetime;
 Metrics::DateMetric::DateMetric(const std::string& name_metric, std::chrono::steady_clock::duration interval) 
     : Metric(name_metric, interval)
     { }
@@ -39,7 +40,7 @@ void Metrics::DateMetric::update(void) {
 }
 
 
-// class CPUMetric
+// class CPUMetric for give CPU load;
 Metrics::CPUMetric::CPUMetric(const std::string& name_metric, std::chrono::steady_clock::duration interval) 
     : Metric(name_metric, interval) {
     
@@ -86,7 +87,7 @@ void Metrics::CPUMetric::update(void) {
 
 }
 
-
+// Class HttpRequestMetric for count http requests
 Metrics::HttpRequestMetric::HttpRequestMetric(const std::string& name_metric, std::chrono::steady_clock::duration interval)
     : Metric(name_metric, interval)
     { }
@@ -99,7 +100,6 @@ void Metrics::HttpRequestMetric::update(void) {
         metric_value = std::to_string(rps);
     }
 }
-
 
 // Class MetricManager for management metrics in other thread;
 Metrics::MetricManager::MetricManager(std::vector<std::shared_ptr<Metric>>&& metrics)
